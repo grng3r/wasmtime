@@ -66,9 +66,9 @@ pub struct StoreLimits(Rc<LimitsState>);
 
 struct LimitsState {
     /// Remaining memory, in bytes, left to allocate
-    remaining_memory: Cell<usize>,
+    pub remaining_memory: Cell<usize>,
     /// Whether or not an allocation request has been denied
-    oom: Cell<bool>,
+    pub oom: Cell<bool>,
 }
 
 impl StoreLimits {
