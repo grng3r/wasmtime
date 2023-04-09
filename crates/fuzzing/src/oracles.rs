@@ -77,8 +77,8 @@ impl StoreLimits {
         StoreLimits(Rc::new(LimitsState {
             // Limits tables/memories within a store to at most 1gb for now to
             // exercise some larger address but not overflow various limits.
-            pub remaining_memory: Cell::new(1 << 30),
-            pub oom: Cell::new(false),
+            remaining_memory: Cell::new(1 << 30),
+            oom: Cell::new(false),
         }))
     }
 
@@ -125,7 +125,7 @@ pub enum Timeout {
 /// panic or segfault or anything else that can be detected "passively".
 ///
 /// The engine will be configured using provided config.
-pub fn instantiate(wasm: &[u8], known_valid: bool, config: &generators::Config, timeout: Timeout) {
+/*pub fn instantiate(wasm: &[u8], known_valid: bool, config: &generators::Config, timeout: Timeout) {
     let mut store = config.to_store();
 
     let mut timeout_state = SignalOnDrop::default();
@@ -151,7 +151,7 @@ pub fn instantiate(wasm: &[u8], known_valid: bool, config: &generators::Config, 
     if let Some(module) = compile_module(store.engine(), wasm, known_valid, config) {
         instantiate_with_dummy(&mut store, &module);
     }
-}
+}*/
 
 /// Represents supported commands to the `instantiate_many` function.
 #[derive(Arbitrary, Debug)]
@@ -178,7 +178,7 @@ pub enum Command {
 /// The engine will be configured using the provided config.
 ///
 /// The modules are expected to *not* have start functions as no timeouts are configured.
-pub fn instantiate_many(
+/*pub fn instantiate_many(
     modules: &[Vec<u8>],
     known_valid: bool,
     config: &generators::Config,
@@ -228,7 +228,7 @@ pub fn instantiate_many(
             }
         }
     }
-}
+}*/
 
 fn compile_module(
     engine: &Engine,
@@ -278,7 +278,7 @@ fn compile_module(
 /// what values. Like the results of exported functions, calls to imports should
 /// also yield the same values for each configuration, and we should assert
 /// that.
-pub fn instantiate_with_dummy(store: &mut Store<StoreLimits>, module: &Module) -> Option<Instance> {
+pub fn instantiate_with_dummy(store: &mut Store<StoreLimits>, module: &Module) -> Result<Option<Instance>, Error> {
     // Creation of imports can fail due to resource limit constraints, and then
     // instantiation can naturally fail for a number of reasons as well. Bundle
     // the two steps together to match on the error below.
@@ -286,7 +286,7 @@ pub fn instantiate_with_dummy(store: &mut Store<StoreLimits>, module: &Module) -
         dummy::dummy_linker(store, module).and_then(|l| l.instantiate(&mut *store, module));
 
     let e = match instance {
-        Ok(i) => return Some(i),
+        Ok(i) => return Ok(Some(i)),
         Err(e) => e,
     };
 
@@ -294,15 +294,15 @@ pub fn instantiate_with_dummy(store: &mut Store<StoreLimits>, module: &Module) -
     // expected that fuzz-generated programs try to allocate lots of
     // stuff.
     if store.data().0.oom.get() {
-        log::debug!("failed to instantiate: OOM");
-        return None;
+        //log::debug!("failed to instantiate: OOM");
+        return Ok(None);
     }
 
     // Allow traps which can happen normally with `unreachable` or a
     // timeout or such
     if let Some(trap) = e.downcast_ref::<Trap>() {
-        log::debug!("failed to instantiate: {}", trap);
-        return None;
+        //log::debug!("failed to instantiate: {}", trap);
+        return Ok(None);
     }
 
     let string = e.to_string();
@@ -310,18 +310,19 @@ pub fn instantiate_with_dummy(store: &mut Store<StoreLimits>, module: &Module) -
     // every single module under the sun due to using name-based resolution
     // rather than positional-based resolution
     if string.contains("incompatible import type") {
-        log::debug!("failed to instantiate: {}", string);
-        return None;
+        //log::debug!("failed to instantiate: {}", string);
+        return Ok(None);
     }
 
     // Also allow failures to instantiate as a result of hitting instance limits
     if string.contains("maximum concurrent instance limit") {
         log::debug!("failed to instantiate: {}", string);
-        return None;
+        return Ok(None);
     }
 
     // Everything else should be a bug in the fuzzer or a bug in wasmtime
-    panic!("failed to instantiate: {:?}", e);
+    //panic!("failed to instantiate: {:?}", e);
+    Err(e)
 }
 
 /// Evaluate the function identified by `name` in two different engine
@@ -449,7 +450,7 @@ pub fn make_api_calls(api: generators::api::ApiCalls) {
                 };
 
                 let store = store.as_mut().unwrap();
-                if let Some(instance) = instantiate_with_dummy(store, module) {
+                if let Ok(Some(instance)) = instantiate_with_dummy(store, module) {
                     instances.insert(id, instance);
                 }
             }
