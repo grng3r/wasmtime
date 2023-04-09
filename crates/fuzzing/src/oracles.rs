@@ -77,8 +77,8 @@ impl StoreLimits {
         StoreLimits(Rc::new(LimitsState {
             // Limits tables/memories within a store to at most 1gb for now to
             // exercise some larger address but not overflow various limits.
-            remaining_memory: Cell::new(1 << 30),
-            oom: Cell::new(false),
+            pub remaining_memory: Cell::new(1 << 30),
+            pub oom: Cell::new(false),
         }))
     }
 
