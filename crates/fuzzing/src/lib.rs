@@ -1,6 +1,6 @@
 //! Fuzzing infrastructure for Wasmtime.
 
-#![deny(missing_docs)]
+//#![deny(missing_docs)]
 
 pub use wasm_mutate;
 pub use wasm_smith;

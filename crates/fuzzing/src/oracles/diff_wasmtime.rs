@@ -61,8 +61,8 @@ impl DiffEngine for WasmtimeEngine {
 /// The Wasmtime engine constructs a new store and compiles an instance of a
 /// Wasm module.
 pub struct WasmtimeInstance {
-    store: Store<StoreLimits>,
-    instance: Instance,
+    pub store: Store<StoreLimits>,
+    pub instance: Instance,
 }
 
 impl WasmtimeInstance {
