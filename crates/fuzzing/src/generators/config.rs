@@ -376,25 +376,25 @@ impl<'a> Arbitrary<'a> for Config {
 /// can be tweaked from within.
 #[derive(Arbitrary, Clone, Debug, Eq, Hash, PartialEq)]
 pub struct WasmtimeConfig {
-    opt_level: OptLevel,
-    use_egraphs: bool,
-    debug_info: bool,
-    canonicalize_nans: bool,
-    interruptable: bool,
-    pub(crate) consume_fuel: bool,
-    epoch_interruption: bool,
+    pub opt_level: OptLevel,
+    pub use_egraphs: bool,
+    pub debug_info: bool,
+    pub canonicalize_nans: bool,
+    pub interruptable: bool,
+    pub consume_fuel: bool,
+    pub epoch_interruption: bool,
     /// The Wasmtime memory configuration to use.
     pub memory_config: MemoryConfig,
-    force_jump_veneers: bool,
-    memory_init_cow: bool,
-    memory_guaranteed_dense_image_size: u64,
-    use_precompiled_cwasm: bool,
+    pub force_jump_veneers: bool,
+    pub memory_init_cow: bool,
+    pub memory_guaranteed_dense_image_size: u64,
+    pub use_precompiled_cwasm: bool,
     /// Configuration for the instance allocation strategy to use.
     pub strategy: InstanceAllocationStrategy,
-    codegen: CodegenSettings,
-    padding_between_functions: Option<u16>,
-    generate_address_map: bool,
-    native_unwind_info: bool,
+    pub codegen: CodegenSettings,
+    pub padding_between_functions: Option<u16>,
+    pub generate_address_map: bool,
+    pub native_unwind_info: bool,
 }
 
 impl WasmtimeConfig {
@@ -423,14 +423,14 @@ impl WasmtimeConfig {
 }
 
 #[derive(Arbitrary, Clone, Debug, PartialEq, Eq, Hash)]
-enum OptLevel {
+pub enum OptLevel {
     None,
     Speed,
     SpeedAndSize,
 }
 
 impl OptLevel {
-    fn to_wasmtime(&self) -> wasmtime::OptLevel {
+    pub fn to_wasmtime(&self) -> wasmtime::OptLevel {
         match self {
             OptLevel::None => wasmtime::OptLevel::None,
             OptLevel::Speed => wasmtime::OptLevel::Speed,

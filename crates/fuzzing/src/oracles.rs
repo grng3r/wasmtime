@@ -62,13 +62,13 @@ pub fn log_wasm(wasm: &[u8]) {
 /// The `T` in `Store<T>` for fuzzing stores, used to limit resource
 /// consumption during fuzzing.
 #[derive(Clone)]
-pub struct StoreLimits(Rc<LimitsState>);
+pub struct StoreLimits(pub Rc<LimitsState>);
 
-struct LimitsState {
+pub struct LimitsState {
     /// Remaining memory, in bytes, left to allocate
-    remaining_memory: Cell<usize>,
+    pub remaining_memory: Cell<usize>,
     /// Whether or not an allocation request has been denied
-    oom: Cell<bool>,
+    pub oom: Cell<bool>,
 }
 
 impl StoreLimits {
