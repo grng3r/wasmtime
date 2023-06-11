@@ -19,6 +19,7 @@
         clippy::use_self
     )
 )]
+#![feature(asm_sym)]
 
 use anyhow::Error;
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
