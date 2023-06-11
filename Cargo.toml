@@ -111,7 +111,7 @@ exclude = [
 version = "7.0.0"
 authors = ["The Wasmtime Project Developers"]
 edition = "2021"
-rust-version = "1.66.0"
+rust-version = "1.65.0" #"1.66.0"this is to allow fuzzing with cargo-libafl
 
 [workspace.dependencies]
 wasmtime = { path = "crates/wasmtime", version = "7.0.0", default-features = false }
