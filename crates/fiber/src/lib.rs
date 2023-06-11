@@ -1,3 +1,5 @@
+#![feature(asm_sym)]
+
 use std::any::Any;
 use std::cell::Cell;
 use std::io;
