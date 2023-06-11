@@ -47,7 +47,6 @@ asm_func!(
 //    entry_point(rsi): extern fn(*mut u8, *mut u8),
 //    entry_arg0(rdx): *mut u8,
 // )
-#[feature(asm_sym)]
 #[rustfmt::skip]
 asm_func!(
     "wasmtime_fiber_init",

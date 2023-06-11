@@ -28,7 +28,7 @@
 //! Additionally `resumes` stores state at 0xAff0 to restart execution, and
 //! `suspend`, which has 0xB000 so it can find this, will read that and write
 //! its own resumption information into this slot as well.
-
+#![feature(asm_sym)]
 #![allow(unused_macros)]
 
 use crate::RunResult;
